@@ -54,7 +54,9 @@ float calc(std::vector<float> vec, int size, int &pos1, int &pos2)
 
 void MainWindow::on_pushButton_3_clicked()
 {
-   ui->tableWidget->setRowCount(1);
+
+   int size = ui->tableWidget->verticalHeader()->count();
+   ui->tableWidget->setRowCount(size - 1);
 }
 
 void MainWindow::on_pushButton_6_clicked()
@@ -63,6 +65,7 @@ void MainWindow::on_pushButton_6_clicked()
     float mean = 0, S = 0, median = 0, Q1 = 0, Q3 = 0, range = 0;
     int n = 0, pos1 = 0, pos2 = 0;
     int size = ui->tableWidget->verticalHeader()->count();
+    ui->textEdit->clear();
 
     for(int i = 0; i < size; i++)
     {
