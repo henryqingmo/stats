@@ -3,7 +3,6 @@
 #include <vector>
 #include <cmath>
 
-std::vector<int> vect;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -31,35 +30,66 @@ void MainWindow::on_pushButton_3_clicked()
 
 void MainWindow::on_pushButton_6_clicked()
 {
-    float mean = 0;
+    std::vector<float> vec;
+    float mean = 0, S = 0, median = 0;
     int n = 0;
-    float Sx = 0;
-    for(int i = 0; i < ui->tableWidget->verticalHeader()->count(); i++)
+    int size = ui->tableWidget->verticalHeader()->count();
+
+    for(int i = 0; i < size; i++)
     {
-        mean += ui->tableWidget->item(i,0)->text().toFloat();
-        n += ui->tableWidget->item(i, 1)->text().toInt();
+        for(int f = 0;  f < ui->tableWidget->item(i, 1)->text().toInt(); f++)
+        {
+            vec.push_back(ui->tableWidget->item(i, 0)->text().toFloat());
+        }
     }
 
-    for(int i = 0; i< ui->tableWidget->verticalHeader()->count(); i++)
+    sort(vec.begin(),  vec.end());
+
+    float range = vec.back() - vec.front();
+
+   if(vec.size() %2 != 0)
+   {
+       median = (vec.size() + 1)/2;
+   }
+   else
+   {
+       median = ((vec[vec.size()/2] + vec[((vec.size()+2))/2])/2);
+   }
+
+
+    for(int i = 0; i < size; i++)
     {
-        Sx += (ui->tableWidget->item(i,0)->text().toFloat() - mean);
-        Sx = pow(Sx, 2);
+        float x = ui->tableWidget->item(i, 0)->text().toFloat();
+        int y = ui->tableWidget->item(i, 1)->text().toInt();
+        mean += x * y;
+        n += y;
     }
 
-    Sx = sqrt(Sx/(n-1));
+    mean /= n;
 
-   // QString x = ui->tableWidget->item(0,1)->text();
+    for(int i = 0; i < size; i++)
+    {
+        float x = ui->tableWidget->item(i, 0)->text().toFloat();
+        int y = ui->tableWidget->item(i, 1)->text().toInt();
+        S += pow((x - mean), 2) * y;
+    }
 
-    ui->textEdit->append(QString::number(mean));
+    float Sx = sqrt(S/(n-1));
+    float Sd = sqrt(S/n);
 
-    ui->textEdit->append(" ");
-    ui->textEdit->append(QString::number(n));
+    ui->textEdit->append("mean = " + QString::number(mean) + "\n");
+    ui->textEdit->append("Population standard deviation = " + QString::number(Sd) + "\n");
+    ui->textEdit->append("Sample standard deviation = " + QString::number(Sx) + "\n");
 
-    ui->textEdit->append(" ");
-    ui->textEdit->append(QString::number(mean/n));
+    ui->textEdit->append("Max number: " + QString::number(vec.back()));
 
-    ui->textEdit->append(" ");
-    ui->textEdit->append(QString::number(Sx));
+    ui->textEdit->append("Lowest number: " + QString::number(vec.front()));
+
+    ui->textEdit->append("range: " + QString::number(range));
+
+
+    ui->textEdit->append("median: " + QString::number(median));
+
 
 }
 
